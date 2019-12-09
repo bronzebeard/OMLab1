@@ -1,6 +1,7 @@
 package util
 
 import kotlin.math.pow
+import kotlin.math.sqrt
 
 class Vector(coords:List<Double>) {
     var arity:Int=coords.size
@@ -17,7 +18,7 @@ class Vector(coords:List<Double>) {
     }
     operator fun div(input:Double) = times(1/input)
     fun len():Double {
-        return coords.fold(0.0){sum, element -> sum + element.pow(2)}
+        return sqrt(coords.fold(0.0){sum, element -> sum + element.pow(2)})
     }
-    operator fun minus(input: Vector) = input + (this * -1.0)
+    operator fun minus(input: Vector) = this + (input* -1.0)
 }

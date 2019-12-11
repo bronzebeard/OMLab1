@@ -1,6 +1,7 @@
 import util.Vector
 import kotlin.math.pow
 import util.times
+import kotlin.math.abs
 
 typealias VecFun = (Vector) -> Double
 typealias Fun = (Double) -> Double
@@ -13,13 +14,13 @@ class Minimizers {
         //private val FI = 1.618033988749
         private fun dichotomyImpl(a: Vector, b: Vector, func: VecFun, eps: Double, cnt: Int): Vector {
             val mid = (a + b) / 2.0
-            val dir = (a - b) / (a - b).len
+            val dir = (b - a) / (b - a).len
             val tmp = dir * eps
             val fLeft = func(mid - tmp)
             val fRight = func(mid + tmp)
             return when {
                 (b - a).len < eps -> {
-                    println("Dichtomy method iterations: $cnt")
+                    //println("Dichtomy method iterations: $cnt")
                     mid
                 }
                 fLeft < fRight -> dichotomyImpl(a, mid, func, eps, cnt + 1)
@@ -35,7 +36,7 @@ class Minimizers {
             val y2 = func(x2)
             return when {
                 (b - a).len < eps -> {
-                    println("Golden method iterations: $cnt")
+                   // println("Golden method iterations: $cnt")
                     (a + b) / 2.0
                 }
                 y1 >= y2 -> goldenImpl(x1, b, func, eps, cnt + 1)
@@ -88,9 +89,14 @@ class Minimizers {
                 eps
             } else -eps
             var x = start
-            while (func(x) > func(x + step * dir)) {
+            do {
+                val f1 = func(x)
+                val f2 = func(x+step*dir)
+                x+=step*dir
+            } while (f1>f2)
+            /*while (func(x) > func(x + step * dir)) {
                 x += step * dir
-            }
+            }*/
             return x
         }
 
@@ -111,5 +117,37 @@ class Minimizers {
             return i
         }
 
+        fun minimizeNDim(start: Vector, func: VecFun, eps: Double):Vector {
+            var xNew = start
+            var xCur=xNew
+            var i = 0
+            do {
+                xCur = xNew
+                val grad = getGrad(xCur,func,eps)
+                val tmp1 = vecMin(xCur,grad,func,eps)
+                val tmp = dichotomyImpl(xCur,tmp1,func,eps,0)
+                val lambda = abs((tmp-xCur).coords[0]/grad.coords[0])
+                xNew = xCur-lambda*grad
+                val diff = func(xNew)-func(xCur)
+                i++
+            } while (abs(diff)>=eps)
+            println(func(xNew))
+            println(func(xCur))
+            println("Iterations: $i")
+            return xNew
+        }
+
+        fun getGrad(start: Vector, func: VecFun, delta: Double):Vector {
+            var grad = ArrayList<Double>(start.arity)
+
+            for (i in 0 until start.arity) {
+                val dx = delta*start.project(i)
+                val diff = (func(start+dx)-func(start))
+                grad.add(diff/(dx.coords[i]))
+            }
+            var tmp = Vector(grad)
+            tmp /= tmp.len
+            return tmp
+        }
     }
 }

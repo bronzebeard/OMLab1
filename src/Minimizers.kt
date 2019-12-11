@@ -1,5 +1,6 @@
 import util.Vector
 import kotlin.math.pow
+import util.times
 
 typealias VecFun = (Vector) -> Double
 typealias Fun = (Double) -> Double
@@ -16,7 +17,7 @@ class Minimizers {
             val fLeft = func(mid - tmp)
             val fRight = func(mid + tmp)
             return when {
-                (b - a).len() < eps -> {
+                (b - a).len < eps -> {
                     println("Dichtomy method iterations: $cnt")
                     mid
                 }
@@ -32,7 +33,7 @@ class Minimizers {
             val y1 = func(x1)
             val y2 = func(x2)
             return when {
-                (b - a).len() < eps -> {
+                (b - a).len < eps -> {
                     println("Golden method iterations: $cnt")
                     (a + b) / 2.0
                 }
@@ -48,7 +49,7 @@ class Minimizers {
             var y1 = func(x1)
             var y2 = func(x2)
             return when {
-                (b - a).len() < eps -> (a + b) / 2.0
+                (b - a).len < eps -> (a + b) / 2.0
                 y1 > y2 -> fibImpl(x1, b, func, dir, eps, n - 1)
                 else -> fibImpl(a, x2, func, dir, eps, n - 1)
             }
@@ -81,14 +82,33 @@ class Minimizers {
             return 1.0 / SQR5 * (((1.0 + SQR5) / 2).pow(n) - ((1.0 - SQR5) / 2).pow(n))
         }
 
+        fun vecMin(start: Vector, dir: Vector, func: VecFun, eps: Double): Vector {
+            val step: Double = if (func(start) > func(start + eps * (dir))) {
+                eps
+            } else -eps
+            var x = start
+            while (func(x)>func(x+step*dir)) {
+                x += step * dir
+            }
+            return x
+        }
+
+        fun lineMin(start: Double, func: Fun, eps: Double):Double {
+            val startV = Vector(listOf(start))
+            val dir = Vector(listOf(1.0))
+            val funcV = {inp:Vector -> func(inp.coords[0])}
+            return vecMin(startV,dir,funcV,eps).coords[0]
+        }
+
         private fun getN(a: Vector, b: Vector, eps: Double): Int {
             var i = 0
-            var len = (b - a).len() / getFib(i)
+            var len = (b - a).len / getFib(i)
             while (len >= eps) {
                 i++
-                len = (b - a).len() / getFib(i)
+                len = (b - a).len / getFib(i)
             }
             return i
         }
+
     }
 }

@@ -11,8 +11,9 @@ const val SQR5 = 2.23606797749978969
 class Minimizers {
     companion object {
         //private val FI = 1.618033988749
-        private fun dichotomyImpl(a: Vector, b: Vector, func: VecFun, dir: Vector, eps: Double, cnt: Int): Vector {
+        private fun dichotomyImpl(a: Vector, b: Vector, func: VecFun, eps: Double, cnt: Int): Vector {
             val mid = (a + b) / 2.0
+            val dir = (a-b)/(a-b).len
             val tmp = dir * eps
             val fLeft = func(mid - tmp)
             val fRight = func(mid + tmp)
@@ -21,12 +22,12 @@ class Minimizers {
                     println("Dichtomy method iterations: $cnt")
                     mid
                 }
-                fLeft < fRight -> dichotomyImpl(a, mid, func, dir, eps, cnt + 1)
-                else -> dichotomyImpl(mid, b, func, dir, eps, cnt + 1)
+                fLeft < fRight -> dichotomyImpl(a, mid, func, eps, cnt + 1)
+                else -> dichotomyImpl(mid, b, func, eps, cnt + 1)
             }
         }
 
-        private fun goldenImpl(a: Vector, b: Vector, func: VecFun, dir: Vector, eps: Double, cnt: Int): Vector {
+        private fun goldenImpl(a: Vector, b: Vector, func: VecFun, eps: Double, cnt: Int): Vector {
             val tmp = (b - a) / FI
             val x1 = b - tmp
             val x2 = a + tmp
@@ -37,8 +38,8 @@ class Minimizers {
                     println("Golden method iterations: $cnt")
                     (a + b) / 2.0
                 }
-                y1 >= y2 -> goldenImpl(x1, b, func, dir, eps, cnt + 1)
-                else -> goldenImpl(a, x2, func, dir, eps, cnt + 1)
+                y1 >= y2 -> goldenImpl(x1, b, func, eps, cnt + 1)
+                else -> goldenImpl(a, x2, func, eps, cnt + 1)
             }
         }
 
@@ -59,7 +60,7 @@ class Minimizers {
             val x1v = Vector(listOf(x1))
             val x2v = Vector(listOf(x2))
             val funcV = { vec: Vector -> func(vec.coords[0]) }
-            return goldenImpl(x1v, x2v, funcV, Vector(listOf(1.0)), eps, 0).coords[0]
+            return goldenImpl(x1v, x2v, funcV, eps, 0).coords[0]
         }
 
         fun fib(x1: Double, x2: Double, func: Fun, eps: Double): Double {
@@ -75,7 +76,7 @@ class Minimizers {
             val x1v = Vector(listOf(x1))
             val x2v = Vector(listOf(x2))
             val funcV = { vec: Vector -> func(vec.coords[0]) }
-            return dichotomyImpl(x1v, x2v, funcV, Vector(listOf(1.0)), eps, 0).coords[0]
+            return dichotomyImpl(x1v, x2v, funcV, eps, 0).coords[0]
         }
 
         private fun getFib(n: Int): Double {

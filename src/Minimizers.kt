@@ -10,7 +10,9 @@ const val FI = 1.6180339887498948482
 const val SQR5 = 2.23606797749978969
 
 class Minimizers {
+
     companion object {
+        var calcs=0
         //private val FI = 1.618033988749
         private fun dichotomyImpl(a: Vector, b: Vector, func: VecFun, eps: Double, cnt: Int): Vector {
             val mid = (a + b) / 2.0
@@ -18,6 +20,7 @@ class Minimizers {
             val tmp = dir * eps
             val fLeft = func(mid - tmp)
             val fRight = func(mid + tmp)
+            calcs+=2
             return when {
                 (b - a).len < eps -> {
                     //println("Dichtomy method iterations: $cnt")
@@ -118,6 +121,7 @@ class Minimizers {
         }
 
         fun minimizeNDim(start: Vector, func: VecFun, eps: Double):Vector {
+            calcs=0
             var xNew = start
             var xCur=xNew
             var i = 0
@@ -131,8 +135,9 @@ class Minimizers {
                 val diff = func(xNew)-func(xCur)
                 i++
             } while (abs(diff)>=eps)
-            println(func(xNew))
-            println(func(xCur))
+            println("Function value:${func(xNew)} with precision: $eps")
+            //println(func(xCur))
+            println("Function calculations: $calcs")
             println("Iterations: $i")
             return xNew
         }
@@ -143,6 +148,7 @@ class Minimizers {
             for (i in 0 until start.arity) {
                 val dx = delta*start.project(i)
                 val diff = (func(start+dx)-func(start))
+                calcs+=2
                 grad.add(diff/(dx.coords[i]))
             }
             var tmp = Vector(grad)

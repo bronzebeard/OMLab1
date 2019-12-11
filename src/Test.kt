@@ -14,9 +14,8 @@ fun main() {
     println(golden(A, B, testF, EPS))
     println(fib(A, B, testF, EPS))*/
     //println(lineMin(0.0,testF,0.01))
-    val vec = Vector(listOf(1.0,1.0))
-    println(vec.project(0))
-    val vecF = {x:Vector -> x.coords[0].pow(2)+100*x.coords[1].pow(2)}
-    println(minimizeNDim(vec,vecF,0.001))
+    val vec = Vector(listOf(1.0,5.0))
+    val vecF = {x:Vector -> 100*(x.coords[1]-x.coords[0].pow(2)).pow(2)+(1-x.coords[0]).pow(2)}
+    println(minimizeNDim(vec,vecF,0.00001))
 
 }

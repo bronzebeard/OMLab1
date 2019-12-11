@@ -13,7 +13,7 @@ class Minimizers {
         //private val FI = 1.618033988749
         private fun dichotomyImpl(a: Vector, b: Vector, func: VecFun, eps: Double, cnt: Int): Vector {
             val mid = (a + b) / 2.0
-            val dir = (a-b)/(a-b).len
+            val dir = (a - b) / (a - b).len
             val tmp = dir * eps
             val fLeft = func(mid - tmp)
             val fRight = func(mid + tmp)
@@ -43,7 +43,7 @@ class Minimizers {
             }
         }
 
-        private fun fibImpl(a: Vector, b: Vector, func: VecFun, dir: Vector, eps: Double, n: Int): Vector {
+        private fun fibImpl(a: Vector, b: Vector, func: VecFun, eps: Double, n: Int): Vector {
 
             var x1 = a + (b - a) * (getFib(n - 2) / getFib(n))
             var x2 = a + (b - a) * (getFib(n - 1) / getFib(n))
@@ -51,8 +51,8 @@ class Minimizers {
             var y2 = func(x2)
             return when {
                 (b - a).len < eps -> (a + b) / 2.0
-                y1 > y2 -> fibImpl(x1, b, func, dir, eps, n - 1)
-                else -> fibImpl(a, x2, func, dir, eps, n - 1)
+                y1 > y2 -> fibImpl(x1, b, func, eps, n - 1)
+                else -> fibImpl(a, x2, func, eps, n - 1)
             }
         }
 
@@ -69,7 +69,7 @@ class Minimizers {
             val funcV = { vec: Vector -> func(vec.coords[0]) }
             val n = getN(x1v, x2v, eps)
             println("Fibonacci method iterations: " + (n - 2))
-            return fibImpl(x1v, x2v, funcV, Vector(listOf(1.0)), eps, n).coords[0]
+            return fibImpl(x1v, x2v, funcV, eps, n).coords[0]
         }
 
         fun dichotomy(x1: Double, x2: Double, func: Fun, eps: Double): Double {
@@ -88,17 +88,17 @@ class Minimizers {
                 eps
             } else -eps
             var x = start
-            while (func(x)>func(x+step*dir)) {
+            while (func(x) > func(x + step * dir)) {
                 x += step * dir
             }
             return x
         }
 
-        fun lineMin(start: Double, func: Fun, eps: Double):Double {
+        fun lineMin(start: Double, func: Fun, eps: Double): Double {
             val startV = Vector(listOf(start))
             val dir = Vector(listOf(1.0))
-            val funcV = {inp:Vector -> func(inp.coords[0])}
-            return vecMin(startV,dir,funcV,eps).coords[0]
+            val funcV = { inp: Vector -> func(inp.coords[0]) }
+            return vecMin(startV, dir, funcV, eps).coords[0]
         }
 
         private fun getN(a: Vector, b: Vector, eps: Double): Int {

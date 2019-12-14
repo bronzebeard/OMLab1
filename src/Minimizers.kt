@@ -46,10 +46,10 @@ class Minimizers {
 
         private fun fibImpl(a: Vector, b: Vector, func: VecFun, eps: Double, n: Int): Vector {
 
-            var x1 = a + (b - a) * (getFib(n - 2) / getFib(n))
-            var x2 = a + (b - a) * (getFib(n - 1) / getFib(n))
-            var y1 = func(x1)
-            var y2 = func(x2)
+            val x1 = a + (b - a) * (getFib(n - 2) / getFib(n))
+            val x2 = a + (b - a) * (getFib(n - 1) / getFib(n))
+            val y1 = func(x1)
+            val y2 = func(x2)
             return when {
                 (b - a).len < eps -> (a + b) / 2.0
                 y1 > y2 -> fibImpl(x1, b, func, eps, n - 1)
@@ -69,7 +69,7 @@ class Minimizers {
             val x2v = Vector(listOf(x2))
             val funcV = { vec: Vector -> func(vec.coords[0]) }
             val n = getN(x1v, x2v, eps)
-            println("Fibonacci method iterations: " + (n - 2))
+//            println("Fibonacci method iterations: " + (n - 2))
             return fibImpl(x1v, x2v, funcV, eps, n).coords[0]
         }
 
@@ -131,9 +131,9 @@ class Minimizers {
                 val diff = func(xNew) - func(xCur)
                 i++
             } while (abs(diff) >= eps)
-            println(func(xNew))
+            /*println(func(xNew))
             println(func(xCur))
-            println("Iterations: $i")
+            println("Iterations: $i")*/
             return xNew
         }
 

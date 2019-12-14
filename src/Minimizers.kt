@@ -36,7 +36,7 @@ class Minimizers {
             val y2 = func(x2)
             return when {
                 (b - a).len < eps -> {
-                   // println("Golden method iterations: $cnt")
+                    // println("Golden method iterations: $cnt")
                     (a + b) / 2.0
                 }
                 y1 >= y2 -> goldenImpl(x1, b, func, eps, cnt + 1)
@@ -91,9 +91,9 @@ class Minimizers {
             var x = start
             do {
                 val f1 = func(x)
-                val f2 = func(x+step*dir)
-                x+=step*dir
-            } while (f1>f2)
+                val f2 = func(x + step * dir)
+                x += step * dir
+            } while (f1 > f2)
             /*while (func(x) > func(x + step * dir)) {
                 x += step * dir
             }*/
@@ -117,33 +117,33 @@ class Minimizers {
             return i
         }
 
-        fun minimizeNDim(start: Vector, func: VecFun, eps: Double):Vector {
+        fun minimizeNDim(start: Vector, func: VecFun, eps: Double): Vector {
             var xNew = start
-            var xCur=xNew
+            var xCur = xNew
             var i = 0
             do {
                 xCur = xNew
-                val grad = getGrad(xCur,func,eps)
-                val tmp1 = vecMin(xCur,grad,func,eps)
-                val tmp = dichotomyImpl(xCur,tmp1,func,eps,0)
-                val lambda = abs((tmp-xCur).coords[0]/grad.coords[0])
-                xNew = xCur-lambda*grad
-                val diff = func(xNew)-func(xCur)
+                val grad = getGrad(xCur, func, eps)
+                val tmp1 = vecMin(xCur, grad, func, eps)
+                val tmp = dichotomyImpl(xCur, tmp1, func, eps, 0)
+                val lambda = abs((tmp - xCur).coords[0] / grad.coords[0])
+                xNew = xCur - lambda * grad
+                val diff = func(xNew) - func(xCur)
                 i++
-            } while (abs(diff)>=eps)
+            } while (abs(diff) >= eps)
             println(func(xNew))
             println(func(xCur))
             println("Iterations: $i")
             return xNew
         }
 
-        fun getGrad(start: Vector, func: VecFun, delta: Double):Vector {
+        fun getGrad(start: Vector, func: VecFun, delta: Double): Vector {
             var grad = ArrayList<Double>(start.arity)
 
             for (i in 0 until start.arity) {
-                val dx = delta*start.project(i)
-                val diff = (func(start+dx)-func(start))
-                grad.add(diff/(dx.coords[i]))
+                val dx = delta * start.project(i)
+                val diff = (func(start + dx) - func(start))
+                grad.add(diff / (dx.coords[i]))
             }
             var tmp = Vector(grad)
             tmp /= tmp.len
